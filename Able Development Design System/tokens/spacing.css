@@ -1,0 +1,37 @@
+/* Able Development · espaço, raios, grid, motion. Fonte: docs/index.html (seções 02, 07, 08),
+   comercial/proposta-cliente.html e docs/investidores.html. */
+:root {
+  /* escala de espaçamento (docs §02): 8 → 16 → 24 → 32 → 48 → 64 → 96 → 128 → 192 */
+  --espaco-1: 8px; --espaco-2: 16px; --espaco-3: 24px; --espaco-4: 32px; --espaco-5: 48px;
+  --espaco-6: 64px; --espaco-7: 96px; --espaco-8: 128px; --espaco-9: 192px;
+  --space-1: var(--espaco-1); --space-2: var(--espaco-2); --space-3: var(--espaco-3); --space-4: var(--espaco-4);
+  --space-5: var(--espaco-5); --space-6: var(--espaco-6); --space-7: var(--espaco-7); --space-8: var(--espaco-8); --space-9: var(--espaco-9);
+
+  /* raios · "dois raios, sem exceção" (docs §07) + card de plano (decks) */
+  --raio-controle: 8px;   /* botão, input */
+  --raio-superficie: 14px; /* card, modal */
+  --raio-plano: 16px;     /* card de plano/nível com header grafite (decks) */
+  --radius-control: var(--raio-controle);
+  --radius-surface: var(--raio-superficie);
+
+  /* grid e layout */
+  --grid-colunas: 12; /* @kind other */ --grid-gutter: 8px; /* @kind other */
+  --largura-max: 1060px; /* @kind other */                 /* decks */
+  --largura-max-doc: 1020px; /* @kind other */             /* documento de identidade */
+  --margem: clamp(20px, 5vw, 64px); /* @kind other */      /* mínimo 20px em telas pequenas */
+  --alvo-toque: 44px; /* @kind other */                    /* área mínima de qualquer controle */
+  --tap-target: var(--alvo-toque); /* @kind other */
+
+  /* traço tangelo (marcador de seção) */
+  --traco-largura: 36px; /* @kind other */ --traco-altura: 3px; /* @kind other */ /* decks · docs usa 14×2 no eyebrow, social 44×4 */
+
+  /* motion · só transform/opacity · valores provisórios em calibração (lib/motion/eases.ts) */
+  --able-enter: cubic-bezier(.16, 1, .3, 1); /* @kind other */   /* entrada de conteúdo */
+  --able-page: cubic-bezier(.65, .05, .18, 1); /* @kind other */ /* transição de plano inteiro */
+  --ease-enter: var(--able-enter); /* @kind other */ --ease-page: var(--able-page); /* @kind other */
+  --duracao-reveal: .6s; /* @kind other */ --duracao-pagina: .55s; /* @kind other */ --duracao-hover: .25s; /* @kind other */
+  --reveal-deslocamento: 18px; /* @kind other */ /* translateY inicial do reveal (24px no doc de identidade) */
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --duracao-reveal: 0s; /* @kind other */ --duracao-pagina: 0s; /* @kind other */ --duracao-hover: 0s; /* @kind other */ --reveal-deslocamento: 0px; /* @kind other */ }
+}

@@ -1,0 +1,42 @@
+/* Able Development · cores. Fonte: ABLE/tokens/able-tokens.css (v3 apple-minimal).
+   Paleta 100% neutra + um único acento (tangelo). Papel e tinta nunca são #FFF/#000.
+   Contrastes nos comentários são a saída de scripts/contraste.mjs do repo. */
+:root {
+  /* escala neutra · contexto claro (papel) */
+  --cor-papel: #F5F4F1;            /* fundo base */
+  --cor-papel-hover: #EBEAE6;      /* hover/pressed sobre papel */
+  --cor-borda-sutil: #DEDCD6;      /* separadores · 1,25:1 */
+  --cor-borda-controle: #8A867F;   /* borda de controle · 3,29:1 AA não-texto */
+  --cor-texto-secundario: #5F5C56; /* 6,06:1 sobre papel AA */
+  --cor-tinta: #1D1C1A;            /* texto primário · 15,48:1 AAA */
+  /* escala neutra · contexto escuro (grafite) */
+  --cor-grafite: #2A2927;
+  --cor-grafite-hover: #353431;
+  --cor-grafite-borda: #8F8C85;            /* 4,33:1 sobre grafite */
+  --cor-grafite-texto-secundario: #A9A59D; /* 5,92:1 sobre grafite */
+  /* acento único · teto 2–3% da superfície. Nunca fundo, nunca no símbolo.
+     Como texto SOMENTE sobre tinta (5,00:1). 3,10:1/papel · 4,27:1/grafite = só não-texto. */
+  --cor-tangelo: #FB4D00;
+  /* cor de documentação (docs/index.html) — NÃO é token de marca; estado de erro segue em aberto */
+  --cor-erro-doc: #B23A2E;
+
+  /* aliases semânticos · claro */
+  --surface-page: var(--cor-papel);
+  --surface-raised: var(--cor-papel);
+  --surface-hover: var(--cor-papel-hover);
+  --surface-inverse: var(--cor-tinta);
+  --border-subtle: var(--cor-borda-sutil);
+  --border-control: var(--cor-borda-controle);
+  --text-primary: var(--cor-tinta);
+  --text-secondary: var(--cor-texto-secundario);
+  --text-on-inverse: var(--cor-papel);
+  --accent: var(--cor-tangelo);
+  --focus-ring: var(--cor-tinta);
+  --veil: rgba(29, 28, 26, 0.6); /* @kind color */
+  /* aliases semânticos · escuro (grafite) */
+  --dark-surface: var(--cor-grafite);
+  --dark-surface-hover: var(--cor-grafite-hover);
+  --dark-border: var(--cor-grafite-borda);
+  --dark-text-primary: var(--cor-papel);
+  --dark-text-secondary: var(--cor-grafite-texto-secundario);
+}

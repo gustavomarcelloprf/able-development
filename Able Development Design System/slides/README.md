@@ -1,0 +1,2 @@
+# Slides
+Carrossel Instagram 1080×1350 (`social/carrosseis/slide.css` do repo), cinco layouts: abertura (capa), showcase público, numerado, comparação (voz), encerramento (grafite). Margem 96 px; escala própria do formato (eyebrow 29, corpo 40, título 72, display 96, número 300). Tangelo só no traço de abertura e nos traços de índice.

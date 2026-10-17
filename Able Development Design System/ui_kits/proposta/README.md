@@ -1,0 +1,2 @@
+# UI kit · Proposta comercial (deck)
+Recriação de `comercial/proposta-cliente.html`: palco 100svh, slides com transição ablePage (translateX 3% + opacity .55s) e cascata ableEnter nos itens (.15/.27/.39/.51s); campos por prospect editáveis (borda tracejada + traço tangelo); "Modo apresentação" esconde a edição (tecla E alterna). Último slide em grafite com logo invertido. Único valor real: R$4.000 + R$1.000/mês.

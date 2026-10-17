@@ -5,3 +5,6 @@
 node_modules/
 social/carrosseis/saida/
 .DS_Store
+
+# saída do scripts/montar-site.sh
+_site/

@@ -1,0 +1,2 @@
+# UI kit · Identidade (site)
+Recriação do manual `docs/index.html` (seções 01–07): header com eyebrows mono, "momentos" com padding 14vh alternando papel / papel-hover / grafite, display-xl clamp(34px,8.5vw,68px), cards de plataforma, swatches, símbolo e logo, componentes de interface. Reveal por IntersectionObserver (translateY 24 → 0, .7s ableEnter). Eyebrows em mono são interface do documento original, não marca.

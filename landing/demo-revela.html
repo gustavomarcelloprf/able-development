@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demo · revela-texto</title>
+<link rel="stylesheet" href="../tokens/able-tokens.css">
+<link rel="stylesheet" href="vendor/lenis.css">
+<style>
+  @font-face {
+    font-family: 'Switzer';
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    src: url(../fonts/Switzer-Regular.woff2) format('woff2');
+  }
+  @font-face {
+    font-family: 'Switzer';
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+    src: url(../fonts/Switzer-Medium.woff2) format('woff2');
+  }
+  @font-face {
+    font-family: 'Switzer';
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+    src: url(../fonts/Switzer-Semibold.woff2) format('woff2');
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--cor-papel);
+    color: var(--cor-tinta);
+    font-family: var(--fonte-familia);
+    font-size: var(--texto-corpo-tamanho);
+    line-height: var(--texto-corpo-altura);
+  }
+  .faixa {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+  .legenda {
+    font-size: var(--texto-legenda-tamanho);
+    line-height: var(--texto-legenda-altura);
+    color: var(--cor-texto-secundario);
+    font-weight: var(--fonte-peso-medio);
+    letter-spacing: 0.02em;
+    margin: 0 0 1.25rem;
+  }
+  .abertura {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 12vh;
+  }
+  .abertura p { color: var(--cor-texto-secundario); margin: 0; }
+  .bloco { padding-top: 50vh; }
+
+  .display {
+    font-size: clamp(2.5rem, 7vw, 5.5rem);
+    line-height: var(--texto-display-altura);
+    letter-spacing: var(--texto-display-tracking);
+    font-weight: var(--fonte-peso-semibold);
+    margin: 0;
+    max-width: 14ch;
+  }
+  .longo {
+    font-size: var(--texto-titulo-3-tamanho);
+    line-height: var(--texto-titulo-3-altura);
+    letter-spacing: var(--texto-titulo-3-tracking);
+    font-weight: var(--fonte-peso-medio);
+    margin: 0;
+    max-width: 38rem;
+  }
+
+  .grafite {
+    background: var(--cor-grafite);
+    color: var(--cor-papel);
+    margin-top: 50vh;
+    padding: 30vh 0;
+  }
+  .grafite .legenda { color: var(--cor-grafite-texto-secundario); }
+  .grafite .citacao {
+    font-size: var(--texto-titulo-1-tamanho);
+    line-height: var(--texto-titulo-1-altura);
+    letter-spacing: var(--texto-titulo-1-tracking);
+    font-weight: var(--fonte-peso-semibold);
+    margin: 0;
+    max-width: 22ch;
+  }
+
+  .com-filhos {
+    font-size: var(--texto-titulo-2-tamanho);
+    line-height: var(--texto-titulo-2-altura);
+    letter-spacing: var(--texto-titulo-2-tracking);
+    font-weight: var(--fonte-peso-medio);
+    margin: 0;
+    max-width: 30ch;
+  }
+  /* acento só no detalhe: o sublinhado. A cor do texto segue neutra. */
+  .destaque {
+    text-decoration: underline;
+    text-decoration-color: var(--cor-tangelo);
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.14em;
+  }
+  .com-filhos a { color: inherit; text-decoration-color: var(--cor-borda-controle); }
+  .com-filhos a:hover, .com-filhos a:focus-visible { text-decoration-color: var(--cor-tangelo); }
+  .com-filhos a:focus-visible { outline: 2px solid var(--cor-tinta); outline-offset: 3px; }
+
+  .fim { min-height: 100vh; }
+</style>
+</head>
+<body>
+
+<header class="faixa abertura">
+  <p class="legenda">revela-texto · demo</p>
+  <p>Role a página. Cada bloco abaixo tem <code>data-revela</code>: as letras acendem quando o topo do bloco sai de 85% e chega a 35% da altura da tela. Acrescente <code>?nativo</code> à URL para testar sem Lenis.</p>
+</header>
+
+<section class="faixa bloco">
+  <p class="legenda">Título grande</p>
+  <h1 class="display" data-revela>Software feito com calma e precisão.</h1>
+</section>
+
+<section class="faixa bloco">
+  <p class="legenda">Parágrafo longo</p>
+  <p class="longo" data-revela>A Able Development desenha e constrói produtos digitais do começo ao fim: entende o problema antes de escrever a primeira linha, escolhe a ferramenta certa em vez da mais nova e entrega software que continua fácil de mudar depois que a gente sai da sala.</p>
+</section>
+
+<section class="grafite">
+  <div class="faixa">
+    <p class="legenda">Sobre grafite</p>
+    <p class="citacao" data-revela data-revela-suave="10">Menos tela, mais intenção. Cada detalhe precisa de um motivo.</p>
+  </div>
+</section>
+
+<section class="faixa bloco">
+  <p class="legenda">Com filhos inline (span e link)</p>
+  <p class="com-filhos" data-revela data-revela-inicio="80%" data-revela-fim="40%">A gente trabalha em <span class="destaque">ciclos curtos</span>, mostra o progresso toda semana e documenta cada decisão — <a href="#topo">veja como</a>.</p>
+</section>
+
+<div class="fim" id="topo"></div>
+
+<script src="vendor/lenis.min.js"></script>
+<script src="revela-texto.js"></script>
+<script>
+(function () {
+  const reduz = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const nativo = /[?&]nativo\b/.test(location.search);
+  const lenis = (!reduz && !nativo && window.Lenis) ? new window.Lenis({ lerp: 0.09, wheelMultiplier: 0.9 }) : null;
+
+  if (lenis) {
+    // quem dita o frame é o Lenis: desliga a escuta nativa do módulo
+    window.RevelaTexto && window.RevelaTexto.modoExterno();
+    lenis.on('scroll', function () { window.RevelaTexto && window.RevelaTexto.atualizar(); });
+    (function quadro(t) { lenis.raf(t); requestAnimationFrame(quadro); })(performance.now());
+  }
+  // sem Lenis (?nativo ou motion reduzido): o módulo escuta o scroll sozinho
+})();
+</script>
+</body>
+</html>
