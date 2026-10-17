@@ -8,3 +8,8 @@ social/carrosseis/saida/
 
 # saída do scripts/montar-site.sh
 _site/
+
+# zips gerados para mandar pelo WhatsApp (o conteúdo já está nas pastas)
+social/*.zip
+# referências visuais de terceiros: só locais
+planejamento/referencias-icone/

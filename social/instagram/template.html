@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<!-- Modelo dos posts do Instagram. Quem preenche é o render.mjs:
+     window.renderSlide(slide, meta) monta um slide por vez.
+     Linguagem visual tirada da landing (a landing é o guia):
+       capa      — título gigante em papel; opcional: símbolo sólido (simbolo) ou em partículas
+       numerado  — número tangelo, filete, título e descrição (Para quem / serviços)
+       frase     — grafite, abertura em papel e continuação em cinza (Por que a Able)
+       mira      — grafite com grade, mira e cruzes tangelo (CTA da landing)
+       onda      — a onda tangelo do CTA, texto em tinta (chamada final)
+       encerramento — tinta, logo e assinatura
+     Formatos: feed 1080×1350 (4:5) e story 1080×1920 (9:16). -->
+<link rel="stylesheet" href="../../tokens/able-tokens.css">
+<style>
+  @font-face { font-family: 'Switzer'; font-weight: 400; font-display: block; src: url(../../fonts/Switzer-Regular.woff2) format('woff2'); }
+  @font-face { font-family: 'Switzer'; font-weight: 500; font-display: block; src: url(../../fonts/Switzer-Medium.woff2) format('woff2'); }
+  @font-face { font-family: 'Switzer'; font-weight: 600; font-display: block; src: url(../../fonts/Switzer-Semibold.woff2) format('woff2'); }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #777; }
+  body { font-family: 'Switzer', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+
+  .slide {
+    position: relative;
+    width: 1080px;
+    height: 1350px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 96px;
+    background: var(--cor-papel);
+    color: var(--cor-tinta);
+    --sec: var(--cor-texto-secundario);
+    --fio: rgba(29, 28, 26, 0.14);
+  }
+  .slide.story { height: 1920px; padding: 220px 96px 260px; }
+  .slide.grafite { background: var(--cor-grafite); color: var(--cor-papel); --sec: var(--cor-grafite-texto-secundario); --fio: rgba(245, 244, 241, 0.18); }
+  .slide.tinta { background: var(--cor-tinta); color: var(--cor-papel); --sec: var(--cor-grafite-texto-secundario); --fio: rgba(245, 244, 241, 0.18); }
+
+  /* camadas de fundo (partículas, grade, onda) */
+  .fundo { position: absolute; inset: 0; pointer-events: none; }
+  canvas.fundo { width: 100%; height: 100%; }
+  .conteudo { position: relative; z-index: 1; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+
+  /* topo: traço tangelo + rótulo */
+  .topo { flex: none; display: flex; align-items: center; gap: 20px; }
+  .topo .traco { width: 44px; height: 4px; background: var(--cor-tangelo); }
+  .rotulo { font-size: 26px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--sec); }
+  .miolo { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
+  .miolo.baixo { justify-content: flex-end; }
+
+  /* rodapé: símbolo + contador / "arraste" */
+  .rodape { flex: none; display: flex; align-items: center; justify-content: space-between; margin-top: 56px; }
+  .rodape svg { height: 52px; width: 52px; display: block; }
+  .contador, .arraste { font-size: 26px; font-weight: 500; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; color: var(--sec); }
+  .arraste { color: inherit; }
+
+  /* tipografia (escala do formato; tracking negativo como na landing) */
+  .titulo { font-weight: 600; letter-spacing: -0.045em; line-height: 1.0; text-wrap: balance; }
+  .t-xl { font-size: 124px; }
+  .t-l { font-size: 96px; letter-spacing: -0.04em; line-height: 1.04; }
+  .t-m { font-size: 80px; letter-spacing: -0.035em; line-height: 1.06; }
+  .apoio { font-size: 38px; line-height: 1.4; letter-spacing: -0.01em; color: var(--sec); max-width: 24ch; text-wrap: pretty; }
+  .resto { color: var(--sec); }
+
+  /* numerado */
+  .num { font-size: 128px; font-weight: 500; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--cor-tangelo); }
+  .filete { height: 1px; background: var(--fio); margin: 56px 0 64px; }
+
+  /* frase (Por que a Able) */
+  .frase { font-size: 92px; font-weight: 600; letter-spacing: -0.035em; line-height: 1.06; max-width: 13ch; text-wrap: pretty; }
+  .pa-num { font-size: 40px; font-weight: 500; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: var(--cor-tangelo); margin-bottom: 40px; }
+
+  /* mira (CTA da landing) */
+  .grade {
+    background-image:
+      linear-gradient(to right, rgba(245, 244, 241, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(245, 244, 241, 0.06) 1px, transparent 1px);
+    background-size: 120px 120px;
+    background-position: 60px 0;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 18%, #000 82%, transparent 100%);
+  }
+  .mira-v, .mira-h { position: absolute; background: rgba(245, 244, 241, 0.32); }
+  .mira-v { left: 50%; top: 0; bottom: 0; width: 1px; }
+  .mira-h { left: 0; right: 0; height: 1px; }
+  .cruz { position: absolute; width: 25px; height: 25px; margin: -12px 0 0 -12px; }
+  .cruz::before, .cruz::after { content: ''; position: absolute; background: var(--cor-tangelo); }
+  .cruz::before { left: 12px; top: 0; width: 1px; height: 25px; }
+  .cruz::after { top: 12px; left: 0; width: 25px; height: 1px; }
+  .cruz.grande { width: 41px; height: 41px; margin: -20px 0 0 -20px; }
+  .cruz.grande::before { left: 20px; width: 2px; height: 41px; background: var(--cor-papel); }
+  .cruz.grande::after { top: 20px; width: 41px; height: 2px; background: var(--cor-papel); }
+  .centro { text-align: center; align-items: center; }
+  .centro .apoio { margin-left: auto; margin-right: auto; }
+
+  /* onda tangelo (CTA): degradê da landing, texto em tinta */
+  .onda { background: linear-gradient(to bottom, #FB6818 0%, #FB4D00 42%, #D63600 100%); }
+  .slide.com-onda .na-onda { color: var(--cor-tinta); }
+  .slide.com-onda .na-onda .apoio { color: rgba(29, 28, 26, 0.78); }
+  .chamada { display: inline-flex; align-items: center; gap: 16px; margin-top: 56px; padding: 26px 40px; border-radius: 999px; background: var(--cor-tinta); color: var(--cor-papel); font-size: 34px; font-weight: 500; letter-spacing: -0.01em; align-self: flex-start; }
+  .slide.com-onda .rodape svg path { stroke: var(--cor-tinta); }
+  .slide.com-onda .contador { color: rgba(29, 28, 26, 0.7); }
+
+  /* encerramento */
+  .logo { width: 640px; display: block; }
+  .assinatura { margin-top: 64px; font-size: 40px; line-height: 1.35; letter-spacing: -0.015em; color: var(--sec); text-align: center; max-width: 22ch; text-wrap: balance; }
+</style>
+</head>
+<body>
+<div id="raiz"></div>
+<script>
+(function () {
+  'use strict';
+  // o render.mjs injeta os SVGs da marca antes de montar (file:// não deixa fazer fetch)
+  var MARCA = window.MARCA || {};
+  var TINTA = '#1D1C1A', PAPEL = '#F5F4F1';
+
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  // \n no texto vira quebra de linha
+  function txt(s) { return esc(s).replace(/\n/g, '<br>'); }
+  function simbolo(cor) { return (MARCA.simbolo || '').split(TINTA).join(cor); }
+  function semente(n) { return function () { n = (n * 16807) % 2147483647; return (n - 1) / 2147483646; }; }
+
+  function topo(s) { return s.rotulo ? '<header class="topo"><span class="traco"></span><span class="rotulo">' + esc(s.rotulo) + '</span></header>' : '<header class="topo"></header>'; }
+  function rodape(s, m, escuro) {
+    // story não tem contador nem "arraste" (cada story é uma tela só)
+    var dir = m.formato === 'story' ? '<span></span>'
+      : m.indice === 1 && m.total > 1 ? '<span class="arraste">Arraste →</span>'
+      : m.total > 1 ? '<span class="contador">' + String(m.indice).padStart(2, '0') + ' / ' + String(m.total).padStart(2, '0') + '</span>' : '<span></span>';
+    return '<footer class="rodape">' + simbolo(escuro ? PAPEL : TINTA) + dir + '</footer>';
+  }
+
+  // ---- partículas: o símbolo da Able feito de pontos (como na landing) ----
+  // traça o símbolo num canvas fora da tela, sorteia pontos dentro do traço
+  // e pinta cada um pela "profundidade" (perto = tinta, longe = quase papel)
+  function particulas(canvas, op) {
+    var W = canvas.width = canvas.clientWidth * 2, H = canvas.height = canvas.clientHeight * 2;
+    var c = canvas.getContext('2d');
+    var rnd = semente(op.semente || 20261007);
+    var lado = op.tamanho * 2, cx = op.cx * W, cy = op.cy * H;
+    var off = document.createElement('canvas'); off.width = off.height = 480;
+    var o = off.getContext('2d');
+    o.scale(4, 4);
+    o.lineWidth = 16; o.lineCap = 'round'; o.lineJoin = 'round'; o.strokeStyle = '#000';
+    (MARCA.caminhos || []).forEach(function (d) { o.stroke(new Path2D(d)); });
+    var px = o.getImageData(0, 0, 480, 480).data, dentro = [];
+    for (var y = 0; y < 480; y += 2) for (var x = 0; x < 480; x += 2) if (px[(y * 480 + x) * 4 + 3] > 140) dentro.push([x / 480, y / 480]);
+    var rampa = op.escuro
+      ? [[245, 244, 241], [200, 197, 190], [140, 137, 131], [86, 84, 80]]
+      : [[29, 28, 26], [95, 92, 86], [176, 172, 164], [214, 211, 204]];
+    function tom(z) {
+      var t = z * (rampa.length - 1), i = Math.min(rampa.length - 2, Math.floor(t)), f = t - i, a = rampa[i], b = rampa[i + 1];
+      return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * f) + ',' + Math.round(a[1] + (b[1] - a[1]) * f) + ',' + Math.round(a[2] + (b[2] - a[2]) * f) + ')';
+    }
+    var pontos = [];
+    // densidade constante: o número de peças acompanha a área do símbolo
+    var total = op.n || Math.round(1000 * Math.pow(op.tamanho / 620, 2));
+    for (var k = 0; k < total; k++) {
+      var p = dentro[Math.floor(rnd() * dentro.length)], z = rnd();
+      var r = (rnd() < 0.05 ? 4.4 + rnd() * 1.6 : 1.6 + rnd() * 2.2) * (1.15 - z * 0.45);
+      pontos.push({ x: cx + (p[0] - 0.5) * lado + (rnd() - 0.5) * 8, y: cy + (p[1] - 0.5) * lado + (rnd() - 0.5) * 8, r: r * 2, z: z, t: rnd() < 0.03 });
+    }
+    // poeira solta pela tela
+    for (var q = 0; q < (op.poeira || 140); q++) pontos.push({ x: rnd() * W, y: rnd() * H, r: (0.8 + rnd() * 1.8) * 2, z: 0.55 + rnd() * 0.45, t: rnd() < 0.04 });
+    pontos.sort(function (a, b) { return b.z - a.z; });
+    pontos.forEach(function (p) {
+      c.beginPath(); c.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      c.fillStyle = p.t ? '#FB4D00' : tom(p.z); c.fill();
+    });
+  }
+
+  // ---- layouts --------------------------------------------------------------
+  var L = {
+    capa: function (s, m) {
+      var esc_ = s.fundo === 'grafite';
+      var h = topo(s) + '<main class="miolo baixo"><h1 class="titulo ' + (s.tamanho || 't-xl') + '">' + txt(s.titulo) +
+        (s.resto ? ' <span class="resto">' + txt(s.resto) + '</span>' : '') + '</h1>' +
+        (s.apoio ? '<p class="apoio" style="margin-top:44px">' + txt(s.apoio) + '</p>' : '') + '</main>' + rodape(s, m, esc_);
+      return { classe: esc_ ? 'grafite' : '', html: h, fundo: s.particulas ? 'particulas' : s.simbolo ? 'simbolo' : null };
+    },
+    numerado: function (s, m) {
+      var e = s.fundo === 'grafite';
+      return { classe: e ? 'grafite' : '', html: topo(s) + '<main class="miolo"><div class="num">' + esc(s.numero) + '</div><div class="filete"></div>' +
+        '<h2 class="titulo t-m">' + txt(s.titulo) + '</h2>' + (s.apoio ? '<p class="apoio" style="margin-top:40px">' + txt(s.apoio) + '</p>' : '') + '</main>' + rodape(s, m, e) };
+    },
+    frase: function (s, m) {
+      return { classe: 'grafite', html: topo(s) + '<main class="miolo"><div class="pa-num">' + esc(s.numero || '') + '</div><div class="filete" style="margin:0 0 56px"></div>' +
+        '<p class="frase">' + txt(s.abertura) + (s.resto ? ' <span class="resto">' + txt(s.resto) + '</span>' : '') + '</p></main>' + rodape(s, m, true) };
+    },
+    mira: function (s, m) {
+      return { classe: 'grafite', fundo: 'mira', html: topo(s) + '<main class="miolo centro"><h2 class="titulo ' + (s.tamanho || 't-l') + '" style="max-width:9.5ch">' + txt(s.titulo) + '</h2>' +
+        (s.apoio ? '<p class="apoio" style="margin-top:48px">' + txt(s.apoio) + '</p>' : '') + '</main>' + rodape(s, m, true) };
+    },
+    onda: function (s, m) {
+      return { classe: 'grafite com-onda', fundo: 'onda', html: topo(s) + '<main class="miolo baixo na-onda"><h2 class="titulo t-l" style="max-width:10ch">' + txt(s.titulo) + '</h2>' +
+        (s.apoio ? '<p class="apoio" style="margin-top:40px;max-width:26ch">' + txt(s.apoio) + '</p>' : '') +
+        (s.chamada ? '<span class="chamada">' + esc(s.chamada) + '</span>' : '') + '</main>' + rodape(s, m, false) };
+    },
+    encerramento: function (s, m) {
+      var logo = (MARCA.logo || '').split(TINTA).join(PAPEL).replace('<svg ', '<svg class="logo" ');
+      return { classe: 'tinta', html: '<header class="topo"></header><main class="miolo centro">' + logo +
+        (s.assinatura ? '<p class="assinatura">' + txt(s.assinatura) + '</p>' : '') + '</main>' +
+        '<footer class="rodape" style="justify-content:center"><span class="contador">' + esc(s.rodape || '') + '</span></footer>' };
+    }
+  };
+
+  window.renderSlide = function (s, m) {
+    var f = L[s.layout];
+    if (!f) throw new Error('layout desconhecido: ' + s.layout);
+    var r = f(s, m);
+    var raiz = document.getElementById('raiz');
+    raiz.innerHTML = '<div class="slide ' + (m.formato === 'story' ? 'story ' : '') + (r.classe || '') + '">' +
+      (r.fundo === 'particulas' ? '<canvas class="fundo"></canvas>' : '') +
+      (r.fundo === 'mira' ? '<div class="fundo grade"></div><div class="fundo"><span class="mira-v"></span><span class="mira-h"></span></div>' : '') +
+      (r.fundo === 'onda' ? '<div class="fundo onda"></div>' : '') +
+      '<div class="conteudo">' + r.html + '</div></div>';
+    var slide = raiz.firstChild, A = slide.clientHeight;
+    if (r.fundo === 'particulas' || r.fundo === 'simbolo') {
+      // o símbolo ocupa o espaço livre entre o topo e o título (nunca por cima do texto)
+      var sr = slide.getBoundingClientRect(), topoY = slide.querySelector('.topo').getBoundingClientRect().bottom - sr.top;
+      var textoY = slide.querySelector('.miolo h1').getBoundingClientRect().top - sr.top;
+      // sólido pesa mais que as partículas: nasce menor
+      var livre = textoY - topoY - 60, lado = Math.min(s.tamanhoSimbolo || (r.fundo === 'simbolo' ? 440 : 620), livre / 0.92);
+      var cxS = 1080 - 96 - lado * 0.46, cyS = topoY + 20 + livre / 2;
+      if (r.fundo === 'particulas') {
+        particulas(slide.querySelector('canvas'), { cx: cxS / 1080, cy: cyS / A, tamanho: lado, escuro: s.fundo === 'grafite', semente: s.semente });
+      } else {
+        // símbolo tradicional (silhueta sólida do assets/simbolo.svg), no mesmo lugar
+        slide.insertAdjacentHTML('afterbegin', '<div class="fundo" style="left:' + (cxS - lado / 2) + 'px;top:' + (cyS - lado / 2) + 'px;width:' + lado + 'px;height:' + lado + 'px;right:auto;bottom:auto">' +
+          simbolo(s.fundo === 'grafite' ? PAPEL : TINTA).replace('<svg ', '<svg style="width:100%;height:100%;display:block" ') + '</div>');
+      }
+    }
+    if (r.fundo === 'mira') {
+      // linha horizontal a 76% e a cruz no encontro; cruzes tangelo sorteadas nos cruzamentos da grade
+      var yh = Math.round(A * 0.76 / 120) * 120;
+      var camada = slide.querySelectorAll('.fundo')[1];
+      camada.querySelector('.mira-h').style.top = yh + 'px';
+      camada.insertAdjacentHTML('beforeend', '<span class="cruz grande" style="left:540px;top:' + yh + 'px"></span>');
+      var rnd = semente(s.semente || 7), usados = {}, n = 0;
+      for (var t = 0; n < 6 && t < 200; t++) {
+        var col = Math.floor(rnd() * 9), lin = 1 + Math.floor(rnd() * (A / 120 - 2)), x = 60 + col * 120, y = lin * 120;
+        // só nas colunas de fora: o miolo fica livre para o texto
+        if (Math.abs(x - 540) < 400 || Math.abs(y - yh) < 100 || usados[col + ':' + lin]) continue;
+        usados[col + ':' + lin] = 1; n++;
+        camada.insertAdjacentHTML('beforeend', '<span class="cruz" style="left:' + x + 'px;top:' + y + 'px"></span>');
+      }
+    }
+    return document.fonts.ready.then(function () { return true; });
+  };
+})();
+</script>
+</body>
+</html>

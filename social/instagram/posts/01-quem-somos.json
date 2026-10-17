@@ -1,0 +1,13 @@
+{
+  "post": "01-quem-somos",
+  "slides": [
+    { "layout": "capa", "simbolo": true, "rotulo": "Able Development", "titulo": "Sistemas complexos não precisam ser difíceis de usar." },
+    { "layout": "frase", "rotulo": "Quem somos", "abertura": "Somos um estúdio de desenvolvimento de software", "resto": "com foco no que realmente importa: o usuário." },
+    { "layout": "numerado", "rotulo": "O que fazemos", "numero": "001", "titulo": "Desenvolvimento\nsob medida.", "apoio": "Da ideia ao código. Da concepção à infraestrutura. Software robusto e escalável para a sua operação." },
+    { "layout": "numerado", "fundo": "grafite", "rotulo": "O que fazemos", "numero": "002", "titulo": "Design de\nexperiência.", "apoio": "Simples por fora, robusto por dentro. Lógica complexa em plataformas intuitivas." },
+    { "layout": "numerado", "rotulo": "O que fazemos", "numero": "003", "titulo": "Ciclo\ncompleto.", "apoio": "Um time só, do início ao fim. Do backend ao deploy, com coesão técnica do começo ao lançamento." },
+    { "layout": "onda", "titulo": "Pronto para tirar o seu projeto do papel?", "apoio": "Nós cuidamos da parte complexa para você focar no que importa: o seu crescimento.", "chamada": "Fale com a gente · link na bio" },
+    { "layout": "encerramento", "assinatura": "Engenharia robusta por dentro, simplicidade por fora.", "rodape": "Sistemas complexos, simples." }
+  ],
+  "legenda": "Sistemas complexos não precisam ser difíceis de usar.\n\nA Able é um estúdio de desenvolvimento de software. Fazemos sites, plataformas e sistemas sob medida, e o ciclo completo fica com um time só: arquitetura, backend, frontend, banco de dados e deploy.\n\nA complexidade fica por trás. Quem usa encontra algo simples de operar.\n\nTem um projeto parado no papel? O link está na bio.\n\n#desenvolvimentodesoftware #softwaresobmedida #uxdesign #saas #tecnologia"
+}

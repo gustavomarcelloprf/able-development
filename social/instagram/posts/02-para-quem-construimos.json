@@ -1,0 +1,14 @@
+{
+  "post": "02-para-quem-construimos",
+  "slides": [
+    { "layout": "capa", "simbolo": true, "semente": 31, "rotulo": "Able Development", "titulo": "Para quem construímos.", "resto": "Uma equipe. Qualquer solução." },
+    { "layout": "numerado", "rotulo": "Para quem construímos", "numero": "01", "titulo": "Fundadores tirando um SaaS do papel.", "apoio": "Plataformas robustas, seguras e escaláveis desde a primeira linha de código." },
+    { "layout": "numerado", "fundo": "grafite", "rotulo": "Para quem construímos", "numero": "02", "titulo": "Negócios presos em processos manuais.", "apoio": "Integrações e engenharia sob medida para eliminar o trabalho repetitivo." },
+    { "layout": "numerado", "rotulo": "Para quem construímos", "numero": "03", "titulo": "Times que querem ganhar tempo com IA.", "apoio": "Agentes de IA para atendimento, triagem e automação de conversas." },
+    { "layout": "numerado", "fundo": "grafite", "rotulo": "Para quem construímos", "numero": "04", "titulo": "Operações que precisam de clareza.", "apoio": "Ferramentas internas e dashboards para organizar a operação sem fricção." },
+    { "layout": "numerado", "rotulo": "Para quem construímos", "numero": "05", "titulo": "Marcas que exigem presença impecável.", "apoio": "Sites institucionais e portais com estética, velocidade e arquitetura limpa." },
+    { "layout": "numerado", "fundo": "grafite", "rotulo": "Para quem construímos", "numero": "06", "titulo": "Campanhas que precisam converter.", "apoio": "Landing pages de alta performance, otimizadas para tráfego pago." },
+    { "layout": "onda", "titulo": "Vamos destravar a sua operação?", "apoio": "Conte o que você precisa construir. A gente mostra o caminho.", "chamada": "Fale com a gente · link na bio" }
+  ],
+  "legenda": "Uma equipe. Qualquer solução.\n\nConstruímos para:\n01 · fundadores tirando um SaaS do papel\n02 · negócios presos em processos manuais\n03 · times que querem ganhar tempo com IA\n04 · operações que precisam de clareza\n05 · marcas que exigem presença impecável\n06 · campanhas que precisam converter\n\nSe você se viu em algum desses, o link está na bio.\n\n#desenvolvimentodesoftware #saas #automacao #inteligenciaartificial #landingpage"
+}
