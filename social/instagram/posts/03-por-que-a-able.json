@@ -1,13 +1,56 @@
 {
   "post": "03-por-que-a-able",
   "slides": [
-    { "layout": "mira", "rotulo": "Able Development", "titulo": "Por que a Able?", "tamanho": "t-xl", "apoio": "Sistemas complexos não precisam ser difíceis de usar. Essa é a tese que guia cada projeto." },
-    { "layout": "frase", "rotulo": "Por que a Able?", "numero": "01", "abertura": "Simplificar a complexidade real", "resto": "sem perder a profundidade técnica." },
-    { "layout": "frase", "rotulo": "Por que a Able?", "numero": "02", "abertura": "Ciclo completo de ponta a ponta", "resto": "por um time sênior, enxuto e dedicado." },
-    { "layout": "frase", "rotulo": "Por que a Able?", "numero": "03", "abertura": "Ampla versatilidade:", "resto": "de landing pages a plataformas SaaS, sob medida." },
-    { "layout": "frase", "rotulo": "Por que a Able?", "numero": "04", "abertura": "Automação e IA integradas", "resto": "ao fluxo de trabalho, sem tarefas repetitivas." },
-    { "layout": "frase", "rotulo": "Por que a Able?", "numero": "05", "abertura": "Performance desde a base,", "resto": "preparada para crescer sem gargalos." },
-    { "layout": "encerramento", "assinatura": "Olhamos para frente, não para trás.", "rodape": "Sistemas complexos, simples." }
+    {
+      "layout": "mira",
+      "rotulo": "Able Development",
+      "titulo": "Por que a Able?",
+      "tamanho": "t-xl",
+      "apoio": "Sistemas complexos não precisam ser difíceis de usar. Essa é a tese que guia cada projeto."
+    },
+    {
+      "layout": "frase",
+      "rotulo": "Por que a Able?",
+      "numero": "01",
+      "abertura": "Simplificar a complexidade real",
+      "resto": "sem perder a profundidade técnica.",
+      "fundo": "papel"
+    },
+    {
+      "layout": "frase",
+      "rotulo": "Por que a Able?",
+      "numero": "02",
+      "abertura": "Ciclo completo de ponta a ponta",
+      "resto": "por um time sênior, enxuto e dedicado."
+    },
+    {
+      "layout": "frase",
+      "rotulo": "Por que a Able?",
+      "numero": "03",
+      "abertura": "Ampla versatilidade:",
+      "resto": "de landing pages a plataformas SaaS, sob medida.",
+      "fundo": "papel"
+    },
+    {
+      "layout": "frase",
+      "rotulo": "Por que a Able?",
+      "numero": "04",
+      "abertura": "Automação e IA integradas",
+      "resto": "ao fluxo de trabalho, sem tarefas repetitivas."
+    },
+    {
+      "layout": "frase",
+      "rotulo": "Por que a Able?",
+      "numero": "05",
+      "abertura": "Performance desde a base,",
+      "resto": "preparada para crescer sem gargalos.",
+      "fundo": "papel"
+    },
+    {
+      "layout": "encerramento",
+      "assinatura": "Olhamos para frente, não para trás.",
+      "rodape": "Sistemas complexos, simples."
+    }
   ],
   "legenda": "Por que a Able?\n\n01 · Simplificamos a complexidade real sem perder a profundidade técnica.\n02 · Um time sênior, enxuto e dedicado, cuida do ciclo completo.\n03 · De landing pages a plataformas SaaS, tudo sob medida.\n04 · Automação e IA entram direto no fluxo de trabalho.\n05 · Performance e escala pensadas desde a base.\n\n#desenvolvimentodesoftware #softwaresobmedida #engenhariadesoftware #ux #tecnologia"
 }

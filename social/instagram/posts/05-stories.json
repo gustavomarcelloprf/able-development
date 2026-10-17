@@ -2,7 +2,19 @@
   "post": "05-stories",
   "formato": "story",
   "slides": [
-    { "layout": "capa", "simbolo": true, "rotulo": "Able Development", "titulo": "Sistemas complexos não precisam ser difíceis de usar." },
-    { "layout": "onda", "titulo": "Pronto para tirar o seu projeto do papel?", "apoio": "Nós cuidamos da parte complexa.", "chamada": "Fale com a gente · link na bio" }
+    {
+      "layout": "capa",
+      "simbolo": true,
+      "rotulo": "Able Development",
+      "titulo": "Sistemas complexos não precisam ser difíceis de usar.",
+      "animar": true
+    },
+    {
+      "layout": "onda",
+      "titulo": "Pronto para tirar o seu projeto do papel?",
+      "apoio": "Nós cuidamos da parte complexa.",
+      "chamada": "Fale com a gente · link na bio",
+      "animar": true
+    }
   ]
 }

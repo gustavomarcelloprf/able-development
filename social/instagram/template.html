@@ -96,7 +96,10 @@
   .centro .apoio { margin-left: auto; margin-right: auto; }
 
   /* onda tangelo (CTA): degradê da landing, texto em tinta */
-  .onda { background: linear-gradient(to bottom, #FB6818 0%, #FB4D00 42%, #D63600 100%); }
+  /* a faixa é mais alta que a tela: a borda de cima (degradê) fica acima do
+     quadro no estado parado e aparece quando a onda sobe no story animado */
+  .onda { top: -40%; bottom: auto; height: 140%; background: linear-gradient(to bottom, rgba(251, 104, 24, 0) 0%, rgba(251, 104, 24, 0.7) 18%, #FB6818 28.57%, #FB4D00 58.57%, #D63600 100%); }
+  .pal, .letra { display: inline-block; }
   .slide.com-onda .na-onda { color: var(--cor-tinta); }
   .slide.com-onda .na-onda .apoio { color: rgba(29, 28, 26, 0.78); }
   .chamada { display: inline-flex; align-items: center; gap: 16px; margin-top: 56px; padding: 26px 40px; border-radius: 999px; background: var(--cor-tinta); color: var(--cor-papel); font-size: 34px; font-weight: 500; letter-spacing: -0.01em; align-self: flex-start; }
@@ -138,6 +141,14 @@
   function particulas(canvas, op) {
     var W = canvas.width = canvas.clientWidth * 2, H = canvas.height = canvas.clientHeight * 2;
     var c = canvas.getContext('2d');
+    var a = amostrar(op, W, H);
+    a.pontos.concat(a.poeira).sort(function (p, q) { return q.z - p.z; }).forEach(function (p) {
+      c.beginPath(); c.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      c.fillStyle = p.cor; c.fill();
+    });
+  }
+  // pontos do símbolo (sorteados dentro do traço) e poeira, em pixels do canvas (2×)
+  function amostrar(op, W, H) {
     var rnd = semente(op.semente || 20261007);
     var lado = op.tamanho * 2, cx = op.cx * W, cy = op.cy * H;
     var off = document.createElement('canvas'); off.width = off.height = 480;
@@ -154,21 +165,18 @@
       var t = z * (rampa.length - 1), i = Math.min(rampa.length - 2, Math.floor(t)), f = t - i, a = rampa[i], b = rampa[i + 1];
       return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * f) + ',' + Math.round(a[1] + (b[1] - a[1]) * f) + ',' + Math.round(a[2] + (b[2] - a[2]) * f) + ')';
     }
-    var pontos = [];
+    var pontos = [], poeira = [];
     // densidade constante: o número de peças acompanha a área do símbolo
     var total = op.n || Math.round(1000 * Math.pow(op.tamanho / 620, 2));
     for (var k = 0; k < total; k++) {
       var p = dentro[Math.floor(rnd() * dentro.length)], z = rnd();
       var r = (rnd() < 0.05 ? 4.4 + rnd() * 1.6 : 1.6 + rnd() * 2.2) * (1.15 - z * 0.45);
-      pontos.push({ x: cx + (p[0] - 0.5) * lado + (rnd() - 0.5) * 8, y: cy + (p[1] - 0.5) * lado + (rnd() - 0.5) * 8, r: r * 2, z: z, t: rnd() < 0.03 });
+      pontos.push({ x: cx + (p[0] - 0.5) * lado + (rnd() - 0.5) * 8, y: cy + (p[1] - 0.5) * lado + (rnd() - 0.5) * 8, r: r * 2, z: z,
+        cor: rnd() < 0.03 ? '#FB4D00' : tom(z), x0: rnd() * W, y0: rnd() * H, atraso: rnd() });
     }
     // poeira solta pela tela
-    for (var q = 0; q < (op.poeira || 140); q++) pontos.push({ x: rnd() * W, y: rnd() * H, r: (0.8 + rnd() * 1.8) * 2, z: 0.55 + rnd() * 0.45, t: rnd() < 0.04 });
-    pontos.sort(function (a, b) { return b.z - a.z; });
-    pontos.forEach(function (p) {
-      c.beginPath(); c.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      c.fillStyle = p.t ? '#FB4D00' : tom(p.z); c.fill();
-    });
+    for (var q = 0; q < (op.poeira || 140); q++) poeira.push({ x: rnd() * W, y: rnd() * H, r: (0.8 + rnd() * 1.8) * 2, z: 0.55 + rnd() * 0.45, cor: rnd() < 0.04 ? '#FB4D00' : tom(0.55 + rnd() * 0.45), fase: rnd() * 6.28 });
+    return { pontos: pontos, poeira: poeira, cx: cx, cy: cy };
   }
 
   // ---- layouts --------------------------------------------------------------
@@ -186,8 +194,10 @@
         '<h2 class="titulo t-m">' + txt(s.titulo) + '</h2>' + (s.apoio ? '<p class="apoio" style="margin-top:40px">' + txt(s.apoio) + '</p>' : '') + '</main>' + rodape(s, m, e) };
     },
     frase: function (s, m) {
-      return { classe: 'grafite', html: topo(s) + '<main class="miolo"><div class="pa-num">' + esc(s.numero || '') + '</div><div class="filete" style="margin:0 0 56px"></div>' +
-        '<p class="frase">' + txt(s.abertura) + (s.resto ? ' <span class="resto">' + txt(s.resto) + '</span>' : '') + '</p></main>' + rodape(s, m, true) };
+      // grafite por padrão (como na landing); fundo "papel" inverte: abertura em tinta, resto em cinza
+      var e = s.fundo !== 'papel';
+      return { classe: e ? 'grafite' : '', html: topo(s) + '<main class="miolo"><div class="pa-num">' + esc(s.numero || '') + '</div><div class="filete" style="margin:0 0 56px"></div>' +
+        '<p class="frase">' + txt(s.abertura) + (s.resto ? ' <span class="resto">' + txt(s.resto) + '</span>' : '') + '</p></main>' + rodape(s, m, e) };
     },
     mira: function (s, m) {
       return { classe: 'grafite', fundo: 'mira', html: topo(s) + '<main class="miolo centro"><h2 class="titulo ' + (s.tamanho || 't-l') + '" style="max-width:9.5ch">' + txt(s.titulo) + '</h2>' +
@@ -214,7 +224,7 @@
     raiz.innerHTML = '<div class="slide ' + (m.formato === 'story' ? 'story ' : '') + (r.classe || '') + '">' +
       (r.fundo === 'particulas' ? '<canvas class="fundo"></canvas>' : '') +
       (r.fundo === 'mira' ? '<div class="fundo grade"></div><div class="fundo"><span class="mira-v"></span><span class="mira-h"></span></div>' : '') +
-      (r.fundo === 'onda' ? '<div class="fundo onda"></div>' : '') +
+      (r.fundo === 'onda' ? '<div class="fundo grade"></div><div class="fundo"><span class="mira-v"></span><span class="mira-h"></span></div><div class="fundo onda"></div>' : '') +
       '<div class="conteudo">' + r.html + '</div></div>';
     var slide = raiz.firstChild, A = slide.clientHeight;
     if (r.fundo === 'particulas' || r.fundo === 'simbolo') {
@@ -232,7 +242,7 @@
           simbolo(s.fundo === 'grafite' ? PAPEL : TINTA).replace('<svg ', '<svg style="width:100%;height:100%;display:block" ') + '</div>');
       }
     }
-    if (r.fundo === 'mira') {
+    if (r.fundo === 'mira' || r.fundo === 'onda') {
       // linha horizontal a 76% e a cruz no encontro; cruzes tangelo sorteadas nos cruzamentos da grade
       var yh = Math.round(A * 0.76 / 120) * 120;
       var camada = slide.querySelectorAll('.fundo')[1];
@@ -247,7 +257,162 @@
         camada.insertAdjacentHTML('beforeend', '<span class="cruz" style="left:' + x + 'px;top:' + y + 'px"></span>');
       }
     }
+    estado = { s: s, m: m, r: r, slide: slide, A: A, simb: typeof cxS === 'number' ? { cx: cxS, cy: cyS, lado: lado } : null, prep: null };
     return document.fonts.ready.then(function () { return true; });
+  };
+
+  // ---- animação (stories em vídeo) ------------------------------------------
+  // quadro(t) desenha o instante t (segundos). É função pura do tempo: o
+  // render.mjs pede quadro a quadro e grava cada um (sem depender do relógio).
+  // Os movimentos são os da landing: partículas que se juntam no símbolo,
+  // palavras que sobem, letras digitadas, mira que se desenha, onda tangelo.
+  var estado = null;
+  function lim(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+  function trecho(t, a, b) { return lim((t - a) / (b - a)); }
+  function saida(x) { return 1 - Math.pow(1 - x, 3); }
+  function vaivem(x) { return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+  function mistura(a, b, k) { return 'rgb(' + [0, 1, 2].map(function (i) { return Math.round(a[i] + (b[i] - a[i]) * k); }).join(',') + ')'; }
+
+  // envolve cada palavra (ou letra) do elemento num span, mantendo <br> e .resto
+  function quebrar(el, porLetra) {
+    var pecas = [];
+    (function andar(no) {
+      Array.prototype.slice.call(no.childNodes).forEach(function (f) {
+        if (f.nodeType === 3) {
+          var frag = document.createDocumentFragment();
+          f.textContent.split(/(\s+)/).forEach(function (p) {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(' ')); return; }
+            var w = document.createElement('span'); w.className = 'pal'; w.style.whiteSpace = 'nowrap';
+            if (porLetra) {
+              for (var i = 0; i < p.length; i++) { var l = document.createElement('span'); l.className = 'letra'; l.textContent = p[i]; w.appendChild(l); pecas.push(l); }
+            } else { w.textContent = p; pecas.push(w); }
+            frag.appendChild(w);
+          });
+          no.replaceChild(frag, f);
+        } else if (f.nodeType === 1 && f.tagName !== 'BR') andar(f);
+      });
+    })(el);
+    return pecas;
+  }
+  function sobe(el, u, em) {
+    var e = saida(lim(u));
+    el.style.opacity = e;
+    el.style.transform = e >= 1 ? 'none' : 'translate3d(0,' + ((1 - e) * (em || 0.4)).toFixed(3) + 'em,0)';
+  }
+  function surge(el, u, px) {
+    if (!el) return;
+    var e = saida(lim(u));
+    el.style.opacity = e;
+    el.style.transform = e >= 1 ? 'none' : 'translate3d(0,' + ((1 - e) * (px || 24)).toFixed(1) + 'px,0)';
+  }
+
+  var ANIMA = {
+    // capa: a poeira se junta no símbolo (redemoinho) e vira o logo sólido;
+    // as palavras do título sobem uma a uma
+    capa: {
+      duracao: 6,
+      preparar: function (E) {
+        var sl = E.slide, P = {};
+        if (E.simb) {
+          var cv = sl.querySelector('canvas.fundo');
+          if (!cv) { sl.insertAdjacentHTML('afterbegin', '<canvas class="fundo"></canvas>'); cv = sl.querySelector('canvas.fundo'); }
+          cv.width = 2160; cv.height = E.A * 2;
+          P.cv = cv; P.c = cv.getContext('2d');
+          P.am = amostrar({ cx: E.simb.cx / 1080, cy: E.simb.cy / E.A, tamanho: E.simb.lado, escuro: E.s.fundo === 'grafite', semente: E.s.semente, n: Math.round(1300 * Math.pow(E.simb.lado / 440, 2)) }, 2160, E.A * 2);
+          P.am.pontos.sort(function (a, b) { return b.z - a.z; });
+          P.solido = E.r.fundo === 'simbolo' ? sl.querySelector('.fundo:not(canvas)') : null;
+        }
+        var h = sl.querySelector('.miolo h1'), ap = sl.querySelector('.miolo .apoio');
+        P.pal = quebrar(h).concat(ap ? quebrar(ap) : []);
+        P.topo = sl.querySelector('.topo'); P.rodape = sl.querySelector('.rodape');
+        return P;
+      },
+      quadro: function (E, P, t) {
+        if (P.c) {
+          var c = P.c, W = P.cv.width, H = P.cv.height, cx = P.am.cx, cy = P.am.cy;
+          c.clearRect(0, 0, W, H);
+          var alfaPontos = P.solido ? 1 - trecho(t, 2.5, 3.2) : 1;
+          P.am.poeira.forEach(function (p) {
+            c.beginPath(); c.arc(p.x + Math.sin(t * 0.6 + p.fase) * 24, p.y - t * 18 * (1.3 - p.z), p.r, 0, 6.2832);
+            c.fillStyle = p.cor; c.fill();
+          });
+          c.globalAlpha = alfaPontos;
+          if (alfaPontos > 0) P.am.pontos.forEach(function (p) {
+            // cada peça parte da poeira com um atraso e faz uma curva até o seu lugar
+            var e = vaivem(trecho(t, 0.2 + p.atraso * 0.7, 1.7 + p.atraso * 0.7));
+            var gx = p.x0 + (p.x - p.x0) * e - cx, gy = p.y0 + (p.y - p.y0) * e - cy;
+            var ang = (1 - e) * 1.3, co = Math.cos(ang), si = Math.sin(ang);
+            c.beginPath(); c.arc(cx + gx * co - gy * si, cy + gx * si + gy * co, p.r * (0.6 + 0.4 * e), 0, 6.2832);
+            c.fillStyle = p.cor; c.fill();
+          });
+          c.globalAlpha = 1;
+          if (P.solido) {
+            var k = trecho(t, 2.35, 3.1);
+            P.solido.style.opacity = k;
+            P.solido.style.transform = 'scale(' + (0.96 + 0.04 * saida(k)).toFixed(4) + ')';
+          }
+        }
+        surge(P.topo, trecho(t, 0.1, 0.7));
+        P.pal.forEach(function (w, i) { sobe(w, trecho(t, 1.5 + i * 0.07, 2.2 + i * 0.07)); });
+        surge(P.rodape, trecho(t, 3.0, 3.6));
+      }
+    },
+    // onda: a mira se desenha, a pergunta é digitada e a onda tangelo sobe e
+    // cobre a tela (o texto passa de papel para tinta); entram apoio e chamada
+    onda: {
+      duracao: 7,
+      preparar: function (E) {
+        var sl = E.slide, P = {};
+        P.v = sl.querySelector('.mira-v'); P.h = sl.querySelector('.mira-h');
+        P.cruzes = Array.prototype.slice.call(sl.querySelectorAll('.cruz:not(.grande)'));
+        P.grande = sl.querySelector('.cruz.grande');
+        P.onda = sl.querySelector('.onda');
+        P.titulo = sl.querySelector('.na-onda h2');
+        P.letras = quebrar(P.titulo, true);
+        P.apoio = sl.querySelector('.na-onda .apoio'); P.chamada = sl.querySelector('.chamada');
+        P.topo = sl.querySelector('.topo'); P.rodape = sl.querySelector('.rodape');
+        P.v.style.transformOrigin = 'top'; P.h.style.transformOrigin = 'left';
+        return P;
+      },
+      quadro: function (E, P, t) {
+        P.v.style.transform = 'scaleY(' + saida(trecho(t, 0, 0.9)).toFixed(4) + ')';
+        P.h.style.transform = 'scaleX(' + saida(trecho(t, 0.25, 1.15)).toFixed(4) + ')';
+        if (P.grande) { var g = trecho(t, 0.9, 1.4); P.grande.style.opacity = g; P.grande.style.transform = 'rotate(' + ((1 - g) * 90).toFixed(1) + 'deg)'; }
+        P.cruzes.forEach(function (cz, i) { var m = saida(trecho(t, 0.5 + i * 0.12, 1.0 + i * 0.12)); cz.style.opacity = m; cz.style.transform = 'scale(' + (0.4 + 0.6 * m).toFixed(3) + ') rotate(' + ((1 - m) * 90).toFixed(0) + 'deg)'; });
+        // digitação macia (borda de 5 letras), como no CTA da landing
+        var n = P.letras.length, pos = trecho(t, 0.7, 2.7) * (n + 5);
+        P.letras.forEach(function (l, i) { sobe(l, (pos - i) / 5, 0.22); });
+        // onda: entra por baixo e cobre a tela
+        var k = vaivem(trecho(t, 2.9, 4.4));
+        P.onda.style.transform = 'translate3d(0,' + ((1 - k) * 1.4 * E.A).toFixed(1) + 'px,0)';
+        var tinta = trecho(t, 3.4, 4.1);
+        P.titulo.style.color = mistura([245, 244, 241], [29, 28, 26], tinta);
+        surge(P.topo, trecho(t, 0.1, 0.7));
+        surge(P.apoio, trecho(t, 4.3, 5.0));
+        surge(P.chamada, trecho(t, 4.55, 5.25));
+        surge(P.rodape, trecho(t, 4.8, 5.4));
+      }
+    },
+    // demais layouts: topo, blocos do miolo e rodapé entram em sequência
+    padrao: {
+      duracao: 5,
+      preparar: function (E) {
+        var sl = E.slide;
+        return { blocos: [sl.querySelector('.topo')].concat(Array.prototype.slice.call(sl.querySelectorAll('.miolo > *')), [sl.querySelector('.rodape')]) };
+      },
+      quadro: function (E, P, t) { P.blocos.forEach(function (b, i) { surge(b, trecho(t, 0.2 + i * 0.25, 0.9 + i * 0.25), 40); }); }
+    }
+  };
+
+  window.duracaoAnimacao = function () {
+    var a = ANIMA[estado.s.layout] || ANIMA.padrao;
+    return estado.s.duracao || a.duracao;
+  };
+  window.quadro = function (t) {
+    var a = ANIMA[estado.s.layout] || ANIMA.padrao;
+    if (!estado.prep) estado.prep = a.preparar(estado);
+    a.quadro(estado, estado.prep, t);
   };
 })();
 </script>
